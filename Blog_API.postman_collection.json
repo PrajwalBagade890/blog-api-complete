@@ -1,0 +1,198 @@
+{
+  "info": {
+    "name": "Blog API CRUD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "postId",
+      "value": "1"
+    },
+    {
+      "key": "commentId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create post",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/posts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"First blog\",\n  \"content\": \"Hello world\",\n  \"comments\": [\n    {\n      \"author\": \"Alex\",\n      \"text\": \"Great post\"\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"postId\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List posts",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/posts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get post",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/posts/{{postId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update post",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/posts/{{postId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated blog\",\n  \"content\": \"Updated content\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Add comment",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/posts/{{postId}}/comments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"author\": \"Sam\",\n  \"text\": \"Nice\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+              "const comments=pm.response.json().comments; pm.collectionVariables.set(\"commentId\", comments[comments.length-1].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete comment",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/posts/{{postId}}/comments/{{commentId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete post",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/posts/{{postId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify deletion",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/posts/{{postId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
